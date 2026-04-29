@@ -53,5 +53,13 @@ export async function GET() {
     },
   }));
 
-  return NextResponse.json({ leaderboard, session });
+  return NextResponse.json(
+    { leaderboard, session },
+    {
+      headers: {
+        'Cache-Control': 's-maxage=3, stale-while-revalidate=5',
+      },
+    }
+  );
 }
+

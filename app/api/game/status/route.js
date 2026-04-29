@@ -13,5 +13,13 @@ export async function GET() {
       currentRound: 0,
     });
   }
-  return NextResponse.json({ session });
+  return NextResponse.json(
+    { session },
+    {
+      headers: {
+        'Cache-Control': 's-maxage=2, stale-while-revalidate=5',
+      },
+    }
+  );
 }
+
