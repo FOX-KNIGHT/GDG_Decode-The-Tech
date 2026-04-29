@@ -125,7 +125,7 @@ export default function AdminTeamsPage() {
 
   return (
     <div className="min-h-screen relative bg-dark-950 text-gray-200 overflow-hidden font-body selection:bg-gdg-blue/30 selection:text-white">
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen"></div>
+      <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen"></div>
       <div className="cyber-grid absolute inset-0 pointer-events-none"></div>
 
       {/* Ambience */}

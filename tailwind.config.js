@@ -19,6 +19,13 @@ module.exports = {
           yellow: '#FBBC05',
           green: '#34A853',
         },
+        neon: {
+          cyan: '#00F0FF',
+          red: '#FF5E52',
+          green: '#00FF66',
+          yellow: '#FFC933',
+          magenta: '#FF007F',
+        },
         dark: {
           950: '#030305',
           900: '#07070a', 

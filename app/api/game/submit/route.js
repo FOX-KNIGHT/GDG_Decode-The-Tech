@@ -28,6 +28,14 @@ export async function POST(req) {
     return NextResponse.json({ error: 'Round not active' }, { status: 400 });
   }
 
+  const now = new Date();
+  // Auto-halt check if time is up
+  if (!session.isPaused && session.roundEndTime && now >= new Date(session.roundEndTime)) {
+    session.status = `round${round}_ended`;
+    await session.save();
+    return NextResponse.json({ error: 'Time has expired for this round' }, { status: 400 });
+  }
+
   // Check if already answered
   const roundKey = `round${round}`;
   const alreadyAnswered = team.answeredQuestions[roundKey].find(
@@ -39,7 +47,6 @@ export async function POST(req) {
 
   // Check correctness
   const isCorrect = answer === question.correctAnswer;
-  const now = new Date();
   const timeTaken = Math.max(0, (now - session.roundStartTime) / 1000);
 
   // Calculate points
@@ -84,7 +91,7 @@ export async function POST(req) {
 
   // Update scores
   team.scores[roundKey] = (team.scores[roundKey] || 0) + points;
-  team.scores.total = team.scores.round1 + team.scores.round2 + team.scores.round3 + team.scores.bonusPoints;
+  team.scores.total = (team.scores.round1 || 0) + (team.scores.round2 || 0) + (team.scores.round3 || 0) + (team.scores.bonusPoints || 0);
   
   await team.save();
 

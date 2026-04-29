@@ -12,14 +12,22 @@ export async function GET() {
       status: 'waiting',
       currentRound: 0,
     });
+    session = session.toObject();
   }
-  return NextResponse.json(
-    { session },
-    {
-      headers: {
-        'Cache-Control': 's-maxage=2, stale-while-revalidate=5',
-      },
+
+  // Auto-halt logic
+  if (session.status.includes('_active') && !session.isPaused && session.roundEndTime) {
+    const now = new Date();
+    if (now >= new Date(session.roundEndTime)) {
+      const match = session.status.match(/round(\d+)_active/);
+      if (match) {
+        const newStatus = `round${match[1]}_ended`;
+        await GameSession.updateOne({ sessionId: 'main' }, { $set: { status: newStatus } });
+        session.status = newStatus;
+      }
     }
-  );
+  }
+
+  return NextResponse.json({ session });
 }
 

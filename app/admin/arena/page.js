@@ -47,7 +47,7 @@ export default function AdminArenaPage() {
   return (
     <div className="min-h-screen relative bg-[#020202] text-gray-200 overflow-hidden font-body">
       {/* Background */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-screen pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-10 mix-blend-screen pointer-events-none" />
       <div className="cyber-grid absolute inset-0 pointer-events-none" />
       <div className="scanline" />
       <div className="ambient-orb orb-red opacity-30" />

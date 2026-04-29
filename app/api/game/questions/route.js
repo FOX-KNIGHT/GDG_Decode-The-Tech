@@ -25,7 +25,14 @@ export async function GET(req) {
   
   // Get the team's shuffled order for this round
   const roundKey = `round${round}`;
-  const order = team.questionOrder[roundKey] || allQuestions.map((_, i) => i);
+  let order = team.questionOrder[roundKey] || [];
+  
+  // Ensure all current valid indices are included in the order (handles newly added questions)
+  const allIndices = allQuestions.map((_, i) => i);
+  const missingIndices = allIndices.filter(i => !order.includes(i));
+  if (missingIndices.length > 0 || order.length === 0) {
+    order = [...(order.length > 0 ? order : allIndices), ...missingIndices];
+  }
   
   // Reorder questions per team's shuffle
   const orderedQuestions = order.map(idx => allQuestions[idx]).filter(Boolean);

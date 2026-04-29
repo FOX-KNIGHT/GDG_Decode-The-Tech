@@ -24,6 +24,10 @@ export async function POST(req) {
   }
 
   const body = await req.json();
+  if (!body.questionNumber) {
+    const lastQ = await Question.findOne({ round: body.round }).sort({ questionNumber: -1 });
+    body.questionNumber = lastQ ? lastQ.questionNumber + 1 : 1;
+  }
   const question = await Question.create(body);
   return NextResponse.json({ question }, { status: 201 });
 }

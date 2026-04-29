@@ -7,14 +7,7 @@ export async function GET(req, { params }) {
   await dbConnect();
   const team = await Team.findOne({ teamId: params.teamId }).lean();
   if (!team) return NextResponse.json({ error: 'Team not found' }, { status: 404 });
-  return NextResponse.json(
-    { team },
-    {
-      headers: {
-        'Cache-Control': 's-maxage=3, stale-while-revalidate=5',
-      },
-    }
-  );
+  return NextResponse.json({ team });
 }
 
 export async function PATCH(req, { params }) {

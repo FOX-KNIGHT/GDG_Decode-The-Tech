@@ -8,6 +8,7 @@ import GameSession from '@/lib/models/GameSession';
 
 // Reusing seed data logic
 const round1Questions = [
+  { question: 'What is the answer to life, the universe, and everything?', options: ['42', '24', 'Infinity', 'Zero'], correctAnswer: '42', explanation: 'Hitchhiker\'s Guide to the Galaxy.' },
   { question: 'Online storage and computing accessed via the internet', options: ['Cloud', 'Algorithm', 'Cache', 'Kernel'], correctAnswer: 'Cloud', explanation: 'Cloud computing means storing and accessing data/programs over the internet.' },
   { question: 'Step-by-step set of instructions to solve a problem', options: ['Bug', 'Algorithm', 'Firewall', 'Latency'], correctAnswer: 'Algorithm', explanation: 'An algorithm is a defined sequence of steps to accomplish a task.' },
   { question: 'An error or flaw in a program that causes incorrect behavior', options: ['Patch', 'Bug', 'Cache', 'Pixel'], correctAnswer: 'Bug', explanation: 'A bug is an unintended error in software code.' },

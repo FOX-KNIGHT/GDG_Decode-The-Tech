@@ -54,7 +54,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen bg-dark-950 flex flex-col items-center justify-center relative overflow-hidden font-body text-gray-200">
       {/* Ambience */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03] mix-blend-screen z-0"></div>
+      <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] mix-blend-screen z-0"></div>
       <div className="cyber-grid absolute inset-0 z-0"></div>
       <div className="ambient-orb orb-red opacity-50 z-0"></div>
       

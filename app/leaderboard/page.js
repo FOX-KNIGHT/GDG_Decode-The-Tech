@@ -36,7 +36,7 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-dark-950 text-gray-200 relative overflow-hidden font-body selection:bg-gdg-blue/30 selection:text-white">
       {/* High-End Background Ambience */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
+      <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
       <div className="cyber-grid absolute inset-0 pointer-events-none z-0"></div>
       <div className="gdg-watermark-bg z-0 opacity-[0.03] animate-pulse-glow" style={{ transform: 'translate(-50%, -50%) rotate(15deg) scale(1.2)' }}></div>
 

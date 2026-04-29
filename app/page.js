@@ -16,10 +16,9 @@ export default function HomePage() {
   });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: '' });
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  useEffect(() => {
+    // any client-only side effects
+  }, []);
 
   const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } } };
   const itemVariants = { hidden: { opacity: 0, x: -50, skewX: 10 }, show: { opacity: 1, x: 0, skewX: 0, transition: { type: "spring", stiffness: 60, damping: 20 } } };
@@ -53,7 +52,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-dark-950 text-gray-200 font-body flex flex-col selection:bg-gdg-blue/30 selection:text-white">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
+      <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
       <div className="cyber-grid absolute inset-0 pointer-events-none z-0"></div>
       
       {/* Massive Background GDG Watermark */}
