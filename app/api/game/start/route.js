@@ -1,0 +1,100 @@
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import GameSession from '@/lib/models/GameSession';
+import Team from '@/lib/models/Team';
+
+export async function POST(req) {
+  await dbConnect();
+  const body = await req.json();
+  const { action, round, duration } = body;
+
+  // Admin password check
+  const adminPass = req.headers.get('x-admin-password');
+  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const session = await GameSession.findOne({ sessionId: 'main' });
+  if (!session) {
+    return NextResponse.json({ error: 'No game session found' }, { status: 404 });
+  }
+
+  if (action === 'start_round') {
+    const roundKey = `round${round}`;
+    const durationSeconds = duration || session.roundDurations[roundKey];
+    const now = new Date();
+    
+    session.status = `round${round}_active`;
+    session.currentRound = round;
+    session.roundStartTime = now;
+    session.roundEndTime = new Date(now.getTime() + durationSeconds * 1000);
+    if (duration) session.roundDurations[roundKey] = durationSeconds;
+    
+    // Update all teams' current round and rotate player
+    // Rotate active player: round 1 -> player 0, round 2 -> player 1, round 3 -> player 2
+    await Team.updateMany({}, { 
+      currentRound: round,
+      currentPlayerIndex: round - 1 
+    });
+    
+    await session.save();
+    return NextResponse.json({ session, message: `Round ${round} started` });
+  }
+
+  if (action === 'end_round') {
+    session.status = `round${round}_ended`;
+    session.isPaused = false;
+    await session.save();
+    return NextResponse.json({ session, message: `Round ${round} ended` });
+  }
+
+  if (action === 'pause_round') {
+    if (session.isPaused) return NextResponse.json({ error: 'Already paused' }, { status: 400 });
+    session.isPaused = true;
+    session.pausedAt = new Date();
+    // Calculate remaining time in ms
+    const remaining = Math.max(0, new Date(session.roundEndTime).getTime() - session.pausedAt.getTime());
+    session.timeRemainingAtPause = remaining;
+    // We keep roundEndTime as is, but UI will read timeRemainingAtPause or we can freeze it.
+    // Actually, setting roundEndTime to null might break things, we just rely on isPaused.
+    await session.save();
+    return NextResponse.json({ session, message: `Round ${round} paused` });
+  }
+
+  if (action === 'resume_round') {
+    if (!session.isPaused) return NextResponse.json({ error: 'Not paused' }, { status: 400 });
+    session.isPaused = false;
+    const now = new Date();
+    // Shift the end time by adding the remaining time
+    session.roundEndTime = new Date(now.getTime() + (session.timeRemainingAtPause || 0));
+    await session.save();
+    return NextResponse.json({ session, message: `Round ${round} resumed` });
+  }
+
+  if (action === 'finish') {
+    session.status = 'finished';
+    await session.save();
+    return NextResponse.json({ session, message: 'Game finished' });
+  }
+
+  if (action === 'reset') {
+    session.status = 'waiting';
+    session.currentRound = 0;
+    session.roundStartTime = null;
+    session.roundEndTime = null;
+    session.fastestAnswers = { round1: [], round2: [], round3: [] };
+    await session.save();
+    
+    // Reset all teams
+    await Team.updateMany({}, {
+      currentRound: 0,
+      currentPlayerIndex: 0,
+      scores: { round1: 0, round2: 0, round3: 0, total: 0, bonusPoints: 0 },
+      answeredQuestions: { round1: [], round2: [], round3: [] },
+    });
+    
+    return NextResponse.json({ message: 'Game reset' });
+  }
+
+  return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
+}
