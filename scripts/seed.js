@@ -89,9 +89,9 @@ async function seed() {
 
   // Insert questions
   const allQuestions = [
-    ...round1Questions.map((q, i) => ({ ...q, round: 1, questionNumber: i + 1, basePoints: 10 })),
-    ...round2Questions.map((q, i) => ({ ...q, round: 2, questionNumber: i + 1, basePoints: 15 })),
-    ...round3Questions.map((q, i) => ({ ...q, round: 3, questionNumber: i + 1, basePoints: 10, emojiClue: q.emojiClue || '' })),
+    ...round1Questions.map((q, i) => ({ ...q, round: 1, questionNumber: i + 1, basePoints: 10, isActive: true })),
+    ...round2Questions.map((q, i) => ({ ...q, round: 2, questionNumber: i + 1, basePoints: 15, isActive: true })),
+    ...round3Questions.map((q, i) => ({ ...q, round: 3, questionNumber: i + 1, basePoints: 10, emojiClue: q.emojiClue || '', isActive: true })),
   ];
 
   await mongoose.connection.collection('questions').insertMany(allQuestions);

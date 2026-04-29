@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Team from '@/lib/models/Team';
@@ -13,14 +14,15 @@ export async function GET() {
 // POST /api/teams - create a new team
 export async function POST(req) {
   await dbConnect();
-  
-  // Admin password check
-  const adminPass = req.headers.get('x-admin-password');
-  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const body = await req.json();
+
+  // Admin password check only for bulk imports
+  if (Array.isArray(body)) {
+    const adminPass = req.headers.get('x-admin-password');
+    if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
 
   // Helper function to create a single team object
   async function prepareTeam(teamData, indexOffset = 0) {
