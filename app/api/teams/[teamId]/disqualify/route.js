@@ -12,7 +12,7 @@ export async function POST(req, { params }) {
     const { isDisqualified, reason } = body;
 
     const adminPass = req.headers.get('x-admin-password');
-    const expectedPass = process.env.ADMIN_PASSWORD || 's1ddhant';
+    const expectedPass = process.env.ADMIN_PASSWORD || 'admin123';
     const isAdmin = adminPass === expectedPass;
 
     // Banning (disqualifying) can be done by the game itself (no auth needed — anti-cheat)
