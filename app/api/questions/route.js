@@ -19,7 +19,7 @@ export async function POST(req) {
   await dbConnect();
 
   const adminPass = req.headers.get('x-admin-password');
-  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+  if (adminPass !== (process.env.ADMIN_PASSWORD || 's1ddhant')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -36,7 +36,7 @@ export async function PUT(req) {
   await dbConnect();
 
   const adminPass = req.headers.get('x-admin-password');
-  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+  if (adminPass !== (process.env.ADMIN_PASSWORD || 's1ddhant')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -50,7 +50,7 @@ export async function DELETE(req) {
   await dbConnect();
 
   const adminPass = req.headers.get('x-admin-password');
-  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+  if (adminPass !== (process.env.ADMIN_PASSWORD || 's1ddhant')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -19,7 +19,7 @@ export async function POST(req) {
   // Admin password check only for bulk imports
   if (Array.isArray(body)) {
     const adminPass = req.headers.get('x-admin-password');
-    if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+    if (adminPass !== (process.env.ADMIN_PASSWORD || 's1ddhant')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   }
@@ -97,7 +97,7 @@ export async function DELETE(req) {
 
   // Admin password check
   const adminPass = req.headers.get('x-admin-password');
-  if (adminPass !== (process.env.ADMIN_PASSWORD || 'admin123')) {
+  if (adminPass !== (process.env.ADMIN_PASSWORD || 's1ddhant')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Zap, Cpu, Activity, Clock, Target, AlertTriangle, Lock, Unlock, ArrowRight, CheckCircle2, XCircle, Crosshair, Hexagon, Radar } from 'lucide-react';
+import { ShieldAlert, Zap, Cpu, Activity, Clock, Target, AlertTriangle, Lock, Unlock, ArrowRight, CheckCircle2, XCircle, Crosshair, Hexagon, Radar, Pause } from 'lucide-react';
 
 // --- Cyberpunk Scramble Text ---
 const ScrambleText = ({ text, duration = 1200, className }) => {
@@ -216,7 +216,13 @@ export default function PlayClient({ initialQuestions, initialTeam, initialSessi
   }, [teamId]);
 
   useEffect(() => {
+    clearInterval(timerRef.current);
     if (!session?.roundEndTime) return;
+    // If paused, freeze timer at remaining time
+    if (session?.isPaused && session?.timeRemainingAtPause != null) {
+      setTimeLeft(Math.floor(session.timeRemainingAtPause / 1000));
+      return;
+    }
     const tick = () => {
       const left = Math.max(0, Math.floor((new Date(session.roundEndTime) - Date.now()) / 1000));
       setTimeLeft(left);
@@ -224,7 +230,7 @@ export default function PlayClient({ initialQuestions, initialTeam, initialSessi
     tick();
     timerRef.current = setInterval(tick, 1000);
     return () => clearInterval(timerRef.current);
-  }, [session?.roundEndTime]);
+  }, [session?.roundEndTime, session?.isPaused, session?.timeRemainingAtPause]);
 
   async function fetchData() {
     try {
@@ -403,6 +409,61 @@ export default function PlayClient({ initialQuestions, initialTeam, initialSessi
       <AnimatePresence>
         {showResult && result && (
           <ResultOverlay correct={result.correct} points={result.points} correctAnswer={result.correctAnswer} explanation={result.explanation} onNext={nextQuestion} />
+        )}
+      </AnimatePresence>
+
+      {/* PAUSED OVERLAY */}
+      <AnimatePresence>
+        {session?.isPaused && isRoundActive && (
+          <motion.div
+            key="paused-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-[#000]/80 backdrop-blur-2xl select-none"
+          >
+            {/* Ambient glow */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: [1, 1.05, 1], opacity: 0.2 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full blur-[120px] bg-yellow-400"
+              />
+            </div>
+
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: -20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 120 }}
+              className="relative z-10 flex flex-col items-center gap-6 text-center px-8"
+            >
+              {/* Spinning rings */}
+              <div className="relative w-36 h-36 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full border-4 border-yellow-400/30 border-t-yellow-400 animate-spin" style={{ animationDuration: '2s' }} />
+                <div className="absolute inset-4 rounded-full border-2 border-dashed border-yellow-400/20 animate-spin" style={{ animationDuration: '5s', animationDirection: 'reverse' }} />
+                <Pause className="w-14 h-14 text-yellow-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]" strokeWidth={1.5} />
+              </div>
+
+              <div className="font-mono text-[11px] tracking-[0.6em] uppercase text-yellow-400/70 mb-2">
+                ─── System Interrupt ───
+              </div>
+
+              <div className="font-display font-black text-6xl md:text-8xl tracking-[0.1em] uppercase text-yellow-400 drop-shadow-[0_0_40px_rgba(251,191,36,0.6)] animate-pulse">
+                PAUSED
+              </div>
+
+              <p className="font-mono text-sm text-white/40 tracking-[0.3em] uppercase max-w-sm mt-2">
+                Admin has suspended this phase.<br />Stand by for resumption.
+              </p>
+
+              <div className="mt-4 px-8 py-3 bg-yellow-400/10 border border-yellow-400/30 rounded-full font-mono text-[11px] text-yellow-400 tracking-[0.3em] uppercase">
+                Time frozen · {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 

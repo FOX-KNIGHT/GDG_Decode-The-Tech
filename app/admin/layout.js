@@ -32,7 +32,7 @@ export default function AdminLayout({ children }) {
     // However, an API call ensures it matches process.env.ADMIN_PASSWORD
     fetch('/api/game/status', { headers: { 'x-admin-password': password } })
       .then(res => {
-        if (res.ok || password === 'admin123') { // Fallback basic check
+        if (res.ok || password === 's1ddhant') { // Fallback basic check
           sessionStorage.setItem('admin_pass', password);
           setIsAuthenticated(true);
         } else {
@@ -41,7 +41,7 @@ export default function AdminLayout({ children }) {
       })
       .catch(() => {
         // Fallback for simple local demo
-        if (password === 'admin123') {
+        if (password === 's1ddhant') {
           sessionStorage.setItem('admin_pass', password);
           setIsAuthenticated(true);
         } else {

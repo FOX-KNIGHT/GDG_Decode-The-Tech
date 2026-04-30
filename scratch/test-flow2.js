@@ -1,4 +1,4 @@
-const adminPass = 'admin123';
+const adminPass = 's1ddhant';
 const baseUrl = 'http://localhost:3000';
 
 async function testFlow() {

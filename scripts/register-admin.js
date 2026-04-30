@@ -41,7 +41,7 @@ async function registerAdmin() {
         scores: { round1: 0, round2: 0, round3: 0, total: 0 },
         currentPlayerIndex: 0,
         email: 'admin@zerone.io',
-        password: 'admin123'
+        password: 's1ddhant'
       },
       { upsert: true, new: true }
     );

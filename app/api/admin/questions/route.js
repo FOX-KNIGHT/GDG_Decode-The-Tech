@@ -9,7 +9,7 @@ export async function GET(req) {
 
     // Admin-only endpoint
     const adminPass = req.headers.get('x-admin-password');
-    const expected = process.env.ADMIN_PASSWORD || 'admin123';
+    const expected = process.env.ADMIN_PASSWORD || 's1ddhant';
     if (!adminPass || adminPass !== expected) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

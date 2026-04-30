@@ -23,7 +23,7 @@ export default function AdminDashboard({ initialSession = null, initialTeams = [
   const [session, setSession] = useState(initialSession);
   const [teams, setTeams] = useState(initialTeams);
   const [leaderboard, setLeaderboard] = useState(initialLeaderboard);
-  const [durations, setDurations] = useState({ 1: 900, 2: 1200, 3: 900 });
+  const [durations, setDurations] = useState({ 1: 900, 2: 1200, 3: 900 }); // in seconds
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: 'success' });
   const [timeLeft, setTimeLeft] = useState(0);
@@ -267,13 +267,19 @@ export default function AdminDashboard({ initialSession = null, initialTeams = [
 
                     <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-4 relative z-10">
                        
-                       <div className="flex items-center bg-dark-950 rounded-xl px-3 py-2 border border-white/5">
-                         <Clock size={12} className="text-gray-500 mr-2" />
-                         <select value={durations[r] / 60} onChange={e => setDurations({...durations, [r]: parseInt(e.target.value) * 60})}
+                       <div className="flex items-center bg-dark-950 rounded-xl px-3 py-2 border border-white/5 gap-2">
+                         <Clock size={12} className="text-gray-500" />
+                         <input
+                           type="number"
+                           min="10"
+                           max="7200"
+                           step="10"
+                           value={durations[r]}
+                           onChange={e => setDurations({...durations, [r]: Math.max(10, parseInt(e.target.value) || 10)})}
                            disabled={isActive}
-                           className="bg-transparent text-white font-mono text-[10px] focus:outline-none focus:text-gdg-blue disabled:opacity-50 appearance-none cursor-pointer text-center">
-                           {[5,10,15,20,25,30].map(m => <option key={m} value={m} className="bg-dark-900">{m} MIN</option>)}
-                         </select>
+                           className="bg-transparent text-white font-mono text-[10px] focus:outline-none focus:text-gdg-blue disabled:opacity-50 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                         />
+                         <span className="text-gray-500 font-mono text-[10px]">SEC</span>
                        </div>
 
                        <div className="flex items-center gap-2">
