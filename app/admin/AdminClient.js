@@ -16,7 +16,7 @@ const STATUS_MAP = {
 };
 
 const GdgLogo = ({ className = "w-8 h-8" }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png" alt="GDG Logo" className={`${className} object-contain`} />
+  <img src="/gdg-logo.png" alt="GDG Logo" className={`${className} object-contain`} />
 );
 
 export default function AdminDashboard({ initialSession = null, initialTeams = [], initialLeaderboard = [] }) {
@@ -267,20 +267,23 @@ export default function AdminDashboard({ initialSession = null, initialTeams = [
 
                     <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-4 relative z-10">
                        
-                       <div className="flex items-center bg-dark-950 rounded-xl px-3 py-2 border border-white/5 gap-2">
-                         <Clock size={12} className="text-gray-500" />
-                         <input
-                           type="number"
-                           min="10"
-                           max="7200"
-                           step="10"
-                           value={durations[r]}
-                           onChange={e => setDurations({...durations, [r]: Math.max(10, parseInt(e.target.value) || 10)})}
-                           disabled={isActive}
-                           className="bg-transparent text-white font-mono text-[10px] focus:outline-none focus:text-gdg-blue disabled:opacity-50 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                         />
-                         <span className="text-gray-500 font-mono text-[10px]">SEC</span>
-                       </div>
+                        <div className="flex items-center bg-dark-950 rounded-xl px-3 py-2 border border-white/5 gap-2">
+                          <Clock size={12} className="text-gray-500" />
+                          <input
+                            type="number"
+                            min="1"
+                            max="7200"
+                            step="10"
+                            value={durations[r] === 0 ? '' : durations[r]}
+                            onChange={e => {
+                              const val = parseInt(e.target.value);
+                              setDurations({...durations, [r]: isNaN(val) ? 0 : val});
+                            }}
+                            disabled={isActive}
+                            className="bg-transparent text-white font-mono text-[10px] focus:outline-none focus:text-gdg-blue disabled:opacity-50 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                          <span className="text-gray-500 font-mono text-[10px]">SEC</span>
+                        </div>
 
                        <div className="flex items-center gap-2">
                          {isActive && !session?.isPaused && (

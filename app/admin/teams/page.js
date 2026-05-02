@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const GdgLogo = ({ className = "w-6 h-6" }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png" alt="GDG Logo" className={`${className} object-contain drop-shadow-md`} />
+  <img src="/gdg-logo.png" alt="GDG Logo" className={`${className} object-contain drop-shadow-md`} />
 );
 
 export default function AdminTeamsPage() {

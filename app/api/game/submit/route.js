@@ -38,7 +38,7 @@ export async function POST(req) {
 
   // Check if already answered
   const roundKey = `round${round}`;
-  const alreadyAnswered = team.answeredQuestions[roundKey].find(
+  const alreadyAnswered = (team.answeredQuestions?.[roundKey] || []).find(
     a => a.questionId === String(questionId)
   );
   if (alreadyAnswered) {
@@ -46,42 +46,37 @@ export async function POST(req) {
   }
 
   // Check correctness
-  const isCorrect = answer === question.correctAnswer;
+  let isCorrect = false;
+  const isMatch = question.type === 'match';
+
+  if (isMatch) {
+    // answer is expected to be an array of {left, right} objects
+    if (Array.isArray(answer) && answer.length === question.matchPairs.length) {
+      // Create a map for quick lookup
+      const correctMap = new Map();
+      question.matchPairs.forEach(p => correctMap.set(p.left, p.right));
+      
+      isCorrect = answer.every(pair => correctMap.get(pair.left) === pair.right);
+    }
+  } else {
+    isCorrect = answer === question.correctAnswer;
+  }
+  
   const timeTaken = Math.max(0, (now - session.roundStartTime) / 1000);
 
   // Calculate points
   let points = 0;
-  if (isCorrect) {
-    points = question.basePoints;
-    
-    // Time bonus: up to 5 extra points in first 30 seconds
-    if (session.settings?.timeBonusEnabled) {
-      const timeBonus = Math.max(0, Math.floor(5 * (1 - timeTaken / 30)));
-      points += timeBonus;
-    }
-
-    // Check fastest fingers for this question
-    const fastestForQuestion = session.fastestAnswers[roundKey].find(
-      fa => fa.questionId === String(questionId)
-    );
-    
-    if (!fastestForQuestion) {
-      // First team to answer this question correctly!
-      const bonus = session.settings?.fastestFingerBonus || 5;
-      points += bonus;
-      
-      session.fastestAnswers[roundKey].push({
-        teamId,
-        teamName: team.teamName,
-        questionId: String(questionId),
-        answeredAt: now,
-        timeTaken,
-      });
-      await session.save();
-    }
+  if (isCorrect && !team.isDisqualified) {
+    points = 1; // Standard 1 point per correct answer
+  } else if (isCorrect && team.isDisqualified) {
+    // Correct but disqualified - no points
+    points = 0;
   }
 
   // Save the answer
+  if (!team.answeredQuestions) team.answeredQuestions = {};
+  if (!team.answeredQuestions[roundKey]) team.answeredQuestions[roundKey] = [];
+  
   team.answeredQuestions[roundKey].push({
     questionId: String(questionId),
     answeredAt: now,

@@ -25,33 +25,83 @@ export async function GET(req) {
   
   // Get the team's shuffled order for this round
   const roundKey = `round${round}`;
-  let order = team.questionOrder[roundKey] || [];
+  let order = (team.questionOrder && team.questionOrder[roundKey]) || [];
   
-  // Ensure all current valid indices are included in the order (handles newly added questions)
+  // Helper to shuffle array
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Ensure all current valid indices are included in the order
   const allIndices = allQuestions.map((_, i) => i);
-  const missingIndices = allIndices.filter(i => !order.includes(i));
-  if (missingIndices.length > 0 || order.length === 0) {
-    order = [...(order.length > 0 ? order : allIndices), ...missingIndices];
+  if (order.length === 0 || order.length < allIndices.length) {
+    // If setting shuffleQuestions is true or if it's a new order, shuffle it
+    order = shuffleArray(allIndices);
+    
+    // Save the new order to the team document
+    await Team.updateOne(
+      { teamId },
+      { [`questionOrder.${roundKey}`]: order }
+    );
   }
   
   // Reorder questions per team's shuffle
   const orderedQuestions = order.map(idx => allQuestions[idx]).filter(Boolean);
   
   // Get answered question IDs for this team
-  const answered = team.answeredQuestions[roundKey] || [];
-  const answeredIds = new Set(answered.map(a => a.questionId));
+  const answered = (team.answeredQuestions && team.answeredQuestions[roundKey]) || [];
+  const answeredMap = new Map(answered.map(a => [String(a.questionId), a]));
   
   // Strip correct answers from response (anti-cheat)
-  const safeQuestions = orderedQuestions.map(q => ({
-    _id: q._id,
-    round: q.round,
-    questionNumber: q.questionNumber,
-    question: q.question,
-    emojiClue: q.emojiClue || '',
-    options: q.options,
-    basePoints: q.basePoints,
-    isAnswered: answeredIds.has(String(q._id)),
-  }));
+  const safeQuestions = orderedQuestions.map(q => {
+    const isMatch = q.type === 'match';
+    const answerInfo = answeredMap.get(String(q._id));
+    
+    const safeQ = {
+      _id: q._id,
+      type: isMatch ? 'match' : 'mcq',
+      round: q.round,
+      questionNumber: q.questionNumber,
+      question: q.question,
+      emojiClue: q.emojiClue || '',
+      basePoints: q.basePoints,
+      isAnswered: !!answerInfo,
+      isCorrect: answerInfo?.correct,
+    };
+
+    const isRoundActive = session && session.status === `round${round}_active`;
+    const hasFinishedRound = answered.length >= allQuestions.length && allQuestions.length > 0;
+    
+    const canShowAnswers = team.isEliminated || 
+                         (session && session.status === 'finished') || 
+                         (session && session.currentRound > round) ||
+                         hasFinishedRound;
+
+    if (canShowAnswers) {
+      safeQ.correctAnswer = q.correctAnswer;
+      safeQ.explanation = q.explanation;
+      safeQ.matchPairs = q.matchPairs || [];
+    }
+
+    if (isMatch && q.matchPairs) {
+      // For match type, we provide the left and right lists shuffled separately
+      const left = q.matchPairs.map(p => p.left);
+      const right = q.matchPairs.map(p => p.right);
+      safeQ.matchData = {
+        left: shuffleArray(left),
+        right: shuffleArray(right)
+      };
+    } else {
+      safeQ.options = q.options;
+    }
+
+    return safeQ;
+  });
 
   return NextResponse.json({
     questions: safeQuestions,
@@ -66,6 +116,7 @@ export async function GET(req) {
       currentPlayerIndex: team.currentPlayerIndex,
       players: team.players,
       scores: team.scores,
+      isEliminated: team.isEliminated,
     }
   });
 }

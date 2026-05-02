@@ -14,9 +14,11 @@
 
   --dark-950: #030305;
   --dark-900: #07070a;
-  --dark-800: #0f1115;
-  --dark-700: #16181d;
   --dark-600: #1d2027;
+  
+  --gdg-gradient: linear-gradient(135deg, var(--gdg-blue) 0%, var(--gdg-red) 33%, var(--gdg-yellow) 66%, var(--gdg-green) 100%);
+  --tech-metallic: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+  --tech-glow: rgba(148, 163, 184, 0.2);
 }
 
 * {
@@ -217,7 +219,8 @@ html, body {
   .tech-border::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
   
   /* GDG Watermarks */
-  .gdg-watermark-bg {
+  /* --- Elegant Professional Watermark --- */
+  .premium-watermark {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -226,14 +229,73 @@ html, body {
     height: 80vw;
     max-width: 800px;
     max-height: 800px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png');
+    background-image: url('/bg-logo.jpeg');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.02;
+    opacity: 0.12;
     pointer-events: none;
     z-index: 0;
-    filter: grayscale(100%);
+    filter: grayscale(100%) contrast(120%);
+    mix-blend-mode: screen;
+    animation: slow-breathe 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes slow-breathe {
+    0% { transform: translate(-50%, -50%) scale(0.98); opacity: 0.08; }
+    100% { transform: translate(-50%, -50%) scale(1.02); opacity: 0.15; }
+  }
+
+  .text-metallic {
+    background: var(--tech-metallic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Futuristic Side Branding HUD */
+  .gdg-side-hud {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 0;
+    z-index: 40;
+    pointer-events: none;
+    backdrop-filter: blur(5px);
+  }
+
+  .gdg-side-hud::after {
+    content: 'DECODE_THE_TECH // 2026 // SECURE_UPLINK_001';
+    writing-mode: vertical-rl;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.6em;
+    color: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+  }
+
+  /* Decorative HUD Elements in the side bar */
+  .gdg-watermark-bg .hud-bit {
+    width: 4px;
+    height: 4px;
+    background: var(--gdg-blue);
+    margin: 10px 0;
+    opacity: 0.5;
+    box-shadow: 0 0 10px var(--gdg-blue);
+    animation: pulse-glow 2s infinite alternate;
+  }
+
+  @keyframes pulse-glow {
+    from { opacity: 0.2; transform: scale(1); }
+    to { opacity: 0.8; transform: scale(1.5); }
   }
 }
 

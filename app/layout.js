@@ -24,11 +24,14 @@ export const metadata = {
   description: 'Crack the code behind everyday technology. The ultimate tech quiz experience.',
 };
 
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${orbitron.variable} ${rajdhani.variable} ${shareTechMono.variable} font-body bg-dark-900 text-white antialiased`}>
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );

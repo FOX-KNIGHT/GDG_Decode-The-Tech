@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const GdgLogo = ({ className = "w-8 h-8" }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png" alt="GDG Logo" className={`${className} object-contain`} />
+  <img src="/gdg-logo.png" alt="GDG Logo" className={`${className} object-contain`} />
 );
 
 export default function HomePage() {
@@ -55,8 +55,7 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
       <div className="cyber-grid absolute inset-0 pointer-events-none z-0"></div>
       
-      {/* Massive Background GDG Watermark */}
-      <div className="gdg-watermark-bg z-0 opacity-[0.03] animate-pulse-glow" style={{ filter: 'brightness(1.5) contrast(1.2)' }}></div>
+      <div className="gdg-side-hud"></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[2px] bg-white/5 shadow-[0_0_20px_rgba(255,255,255,0.1)] z-0 rotate-12"></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[2px] h-full bg-white/5 shadow-[0_0_20px_rgba(255,255,255,0.1)] z-0 rotate-12"></div>
 
@@ -96,16 +95,31 @@ export default function HomePage() {
           </motion.div>
 
           <motion.h1 variants={itemVariants} className="font-display font-black leading-[0.85] relative z-10 uppercase flex flex-col items-start mb-6 drop-shadow-2xl">
-            <div className="text-[5rem] md:text-[7rem] lg:text-[8rem] text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-300 to-gray-600 tracking-tighter">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+              className="text-[5rem] md:text-[7rem] lg:text-[8rem] text-white tracking-tighter"
+            >
               DECODE
-            </div>
-            <div className="text-[4rem] md:text-[6rem] lg:text-[7rem] text-gradient-gdg mt-[-10px] lg:mt-[-15px] drop-shadow-[0_0_30px_rgba(66,133,244,0.2)]">
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
+              className="text-[4rem] md:text-[6rem] lg:text-[7rem] text-metallic mt-[-10px] lg:mt-[-15px] drop-shadow-[0_0_20px_var(--tech-glow)] relative overflow-hidden"
+            >
               THE_TECH
-            </div>
+              <motion.div 
+                animate={{ left: ['-100%', '200%'] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+                className="absolute top-0 w-1/4 h-full bg-gradient-to-r from-transparent via-white to-transparent opacity-10 skew-x-[-20deg]"
+              ></motion.div>
+            </motion.div>
           </motion.h1>
           
           <motion.p variants={itemVariants} className="font-mono text-gray-400 text-sm md:text-base max-w-xl mb-12 font-light leading-relaxed border-l border-white/20 pl-6 relative">
-            <div className="absolute left-[-1px] top-0 w-[2px] h-8 bg-gdg-blue animate-data-stream"></div>
+            <div className="absolute left-[-1px] top-0 w-[2px] h-8 bg-gdg-blue animate-pulse"></div>
             Initiate connection sequence. Form your unit, decrypt algorithmic challenges, and breach the global mainframe. Authorized by <span className="text-white font-bold tracking-wider">Google Developer Groups</span>.
           </motion.p>
 

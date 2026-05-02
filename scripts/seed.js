@@ -5,27 +5,34 @@ const mongoose = require('mongoose');
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/decode-the-tech';
 
 const round1Questions = [
-  // Q = Meaning/Definition, Options = Technical Jargon terms, Correct = the jargon
-  { question: 'Online storage and computing accessed via the internet', options: ['Cloud', 'Algorithm', 'Cache', 'Kernel'], correctAnswer: 'Cloud', explanation: 'Cloud computing means storing and accessing data/programs over the internet.' },
-  { question: 'Step-by-step set of instructions to solve a problem', options: ['Bug', 'Algorithm', 'Firewall', 'Latency'], correctAnswer: 'Algorithm', explanation: 'An algorithm is a defined sequence of steps to accomplish a task.' },
-  { question: 'An error or flaw in a program that causes incorrect behavior', options: ['Patch', 'Bug', 'Cache', 'Pixel'], correctAnswer: 'Bug', explanation: 'A bug is an unintended error in software code.' },
-  { question: 'Temporary fast-access storage for frequently used data', options: ['Cache', 'RAM', 'ROM', 'SSD'], correctAnswer: 'Cache', explanation: 'Cache stores frequently accessed data for quicker retrieval.' },
-  { question: 'A network security system that monitors and controls traffic', options: ['Router', 'Firewall', 'Switch', 'Modem'], correctAnswer: 'Firewall', explanation: 'A firewall blocks unauthorized access while permitting outward communication.' },
-  { question: 'Delay in data transfer across a network', options: ['Bandwidth', 'Latency', 'Throughput', 'Jitter'], correctAnswer: 'Latency', explanation: 'Latency is the time it takes for data to travel from source to destination.' },
-  { question: 'The process of converting data into a coded form to prevent unauthorized access', options: ['Hashing', 'Encryption', 'Compression', 'Tokenization'], correctAnswer: 'Encryption', explanation: 'Encryption scrambles data so only authorized users can read it.' },
-  { question: 'A software update that fixes specific problems or vulnerabilities', options: ['Update', 'Patch', 'Build', 'Release'], correctAnswer: 'Patch', explanation: 'A patch is a small piece of code released to fix bugs or security vulnerabilities.' },
-  { question: 'The core program of an operating system that manages hardware resources', options: ['Shell', 'Kernel', 'Driver', 'API'], correctAnswer: 'Kernel', explanation: 'The kernel is the central component of an OS managing CPU, memory, and I/O.' },
-  { question: 'A set of rules allowing different software applications to communicate', options: ['SDK', 'API', 'IDE', 'CLI'], correctAnswer: 'API', explanation: 'API (Application Programming Interface) lets apps talk to each other.' },
-  { question: 'Software designed to harm, disrupt, or gain unauthorized access to a system', options: ['Spyware', 'Malware', 'Adware', 'Ransomware'], correctAnswer: 'Malware', explanation: 'Malware is malicious software including viruses, trojans, and spyware.' },
-  { question: 'The amount of data transferred over a network in a given time', options: ['Latency', 'Bandwidth', 'Frequency', 'Speed'], correctAnswer: 'Bandwidth', explanation: 'Bandwidth measures the data transfer capacity of a network connection.' },
-  { question: 'A unique identifier assigned to every device on a network', options: ['MAC Address', 'IP Address', 'DNS', 'URL'], correctAnswer: 'IP Address', explanation: 'An IP address uniquely identifies a device on an internet or local network.' },
-  { question: 'The practice of making software usable by people with disabilities', options: ['Usability', 'Accessibility', 'Scalability', 'Portability'], correctAnswer: 'Accessibility', explanation: 'Accessibility ensures software works for people with visual, motor, or cognitive impairments.' },
-  { question: 'A simulated computer environment running on a physical machine', options: ['Container', 'Virtual Machine', 'Sandbox', 'Hypervisor'], correctAnswer: 'Virtual Machine', explanation: 'A VM emulates a full computer system within another computer.' },
-  { question: 'A system that converts domain names to IP addresses', options: ['DHCP', 'DNS', 'NAT', 'SSL'], correctAnswer: 'DNS', explanation: 'DNS (Domain Name System) is the internet\'s phone book, mapping names to IPs.' },
-  { question: 'Open-source distributed version control system for tracking code changes', options: ['SVN', 'Git', 'Mercurial', 'CVS'], correctAnswer: 'Git', explanation: 'Git tracks changes in source code during software development.' },
-  { question: 'A lightweight alternative to virtual machines that shares the OS kernel', options: ['Virtual Machine', 'Container', 'Sandbox', 'Cluster'], correctAnswer: 'Container', explanation: 'Containers (like Docker) package apps with dependencies without a full OS.' },
-  { question: 'A cyberattack where an attacker secretly relays and alters communication between two parties', options: ['Phishing', 'Man-in-the-Middle', 'DDoS', 'SQL Injection'], correctAnswer: 'Man-in-the-Middle', explanation: 'MITM attacks intercept communication between two systems.' },
-  { question: 'The smallest unit of data in computing, either 0 or 1', options: ['Byte', 'Bit', 'Nibble', 'Word'], correctAnswer: 'Bit', explanation: 'A bit is the fundamental unit of information in computing.' },
+  // MCQs (10 total)
+  { type: 'mcq', question: 'A unique identifier assigned to every device on a network', options: ['MAC Address', 'IP Address', 'DNS', 'URL'], correctAnswer: 'IP Address', explanation: 'An IP address uniquely identifies a device on an internet or local network.' },
+  { type: 'mcq', question: 'Step-by-step set of instructions to solve a problem', options: ['Bug', 'Algorithm', 'Firewall', 'Latency'], correctAnswer: 'Algorithm', explanation: 'An algorithm is a defined sequence of steps to accomplish a task.' },
+  { type: 'mcq', question: 'The core program of an operating system that manages hardware resources', options: ['Shell', 'Kernel', 'Driver', 'API'], correctAnswer: 'Kernel', explanation: 'The kernel is the central component of an OS managing CPU, memory, and I/O.' },
+  { type: 'mcq', question: 'The practice of making software usable by people with disabilities', options: ['Usability', 'Accessibility', 'Scalability', 'Portability'], correctAnswer: 'Accessibility', explanation: 'Accessibility ensures software works for people with visual, motor, or cognitive impairments.' },
+  { type: 'mcq', question: 'Data that provides information about other data', options: ['Raw Data', 'Metadata', 'Big Data', 'Microdata'], correctAnswer: 'Metadata', explanation: 'Metadata describes the content, quality, and context of data.' },
+  { type: 'mcq', question: 'Software permanently programmed into a hardware device', options: ['Malware', 'Firmware', 'Spyware', 'Adware'], correctAnswer: 'Firmware', explanation: 'Firmware provides low-level control for a device\'s specific hardware.' },
+  { type: 'mcq', question: 'A set of rules for data communication across a network', options: ['Standard', 'Protocol', 'Policy', 'Guideline'], correctAnswer: 'Protocol', explanation: 'Protocols define how data is formatted and transmitted.' },
+  { type: 'mcq', question: 'Translates high-level code into machine-readable instructions', options: ['Interpreter', 'Compiler', 'Debugger', 'Linker'], correctAnswer: 'Compiler', explanation: 'A compiler converts source code into an executable program.' },
+  { type: 'mcq', question: 'The process of finding and fixing errors in code', options: ['Testing', 'Debugging', 'Profiling', 'Refactoring'], correctAnswer: 'Debugging', explanation: 'Debugging involves identifying, isolating, and resolving bugs.' },
+  { type: 'mcq', question: 'An error or flaw in a program that causes incorrect behavior', options: ['Patch', 'Bug', 'Cache', 'Pixel'], correctAnswer: 'Bug', explanation: 'A bug is an unintended error in software code.' },
+
+  // Match The Following (15 total)
+  { type: 'match', question: 'Match the Web Concepts', matchPairs: [{ left: 'DNS', right: 'Name to IP' }, { left: 'HTTP', right: 'Web Transfer' }, { left: 'URL', right: 'Web Address' }], explanation: 'Core protocols of the World Wide Web.' },
+  { type: 'match', question: 'Match the Storage types', matchPairs: [{ left: 'SSD', right: 'Fast Flash' }, { left: 'HDD', right: 'Magnetic Disk' }, { left: 'RAM', right: 'Volatile Memory' }], explanation: 'Different ways computers store data.' },
+  { type: 'match', question: 'Match the Cloud types', matchPairs: [{ left: 'SaaS', right: 'Software Service' }, { left: 'PaaS', right: 'Platform Service' }, { left: 'IaaS', right: 'Infrastructure Service' }], explanation: 'The three main cloud service models.' },
+  { type: 'match', question: 'Match the Programming paradigms', matchPairs: [{ left: 'OOP', right: 'Object Oriented' }, { left: 'Functional', right: 'Pure Functions' }, { left: 'Imperative', right: 'Step Commands' }], explanation: 'Different styles of writing code.' },
+  { type: 'match', question: 'Match the Cybersecurity terms', matchPairs: [{ left: 'Phishing', right: 'Fraudulent emails' }, { left: 'Firewall', right: 'Traffic filter' }, { left: 'VPN', right: 'Secure tunnel' }], explanation: 'Common security tools and threats.' },
+  { type: 'match', question: 'Match the Data units', matchPairs: [{ left: 'Bit', right: '0 or 1' }, { left: 'Byte', right: '8 bits' }, { left: 'Nibble', right: '4 bits' }], explanation: 'Fundamental building blocks of digital data.' },
+  { type: 'match', question: 'Match the Hardware ports', matchPairs: [{ left: 'USB-C', right: 'Universal port' }, { left: 'HDMI', right: 'Video/Audio' }, { left: 'Ethernet', right: 'Wired Network' }], explanation: 'Common physical connections for devices.' },
+  { type: 'match', question: 'Match the OS examples', matchPairs: [{ left: 'Linux', right: 'Open Source' }, { left: 'Windows', right: 'Microsoft' }, { left: 'macOS', right: 'Apple' }], explanation: 'The most popular operating systems.' },
+  { type: 'match', question: 'Match the UI components', matchPairs: [{ left: 'Navbar', right: 'Navigation' }, { left: 'Footer', right: 'Bottom info' }, { left: 'Sidebar', right: 'Side menu' }], explanation: 'Standard parts of a website layout.' },
+  { type: 'match', question: 'Match the Dev tools', matchPairs: [{ left: 'IDE', right: 'Code Editor' }, { left: 'CLI', right: 'Text Terminal' }, { left: 'SDK', right: 'Dev Kit' }], explanation: 'Tools used by software engineers.' },
+  { type: 'match', question: 'Match the Network types', matchPairs: [{ left: 'LAN', right: 'Local area' }, { left: 'WAN', right: 'Wide area' }, { left: 'PAN', right: 'Personal area' }], explanation: 'Classifications of computer networks.' },
+  { type: 'match', question: 'Match the Browser names', matchPairs: [{ left: 'Chrome', right: 'Google' }, { left: 'Firefox', right: 'Mozilla' }, { left: 'Safari', right: 'Apple' }], explanation: 'Common software for web surfing.' },
+  { type: 'match', question: 'Match the Databases', matchPairs: [{ left: 'SQL', right: 'Relational' }, { left: 'NoSQL', right: 'Non-relational' }, { left: 'Redis', right: 'In-memory' }], explanation: 'Systems for storing and managing data.' },
+  { type: 'match', question: 'Match the File formats', matchPairs: [{ left: 'JSON', right: 'Data Object' }, { left: 'HTML', right: 'Markup' }, { left: 'CSS', right: 'Styling' }], explanation: 'Standard languages for web development.' },
+  { type: 'match', question: 'Match the Mobile OS', matchPairs: [{ left: 'Android', right: 'Google Mobile' }, { left: 'iOS', right: 'Apple Mobile' }, { left: 'Harmony', right: 'Huawei' }], explanation: 'Operating systems for smartphones.' }
 ];
 
 const round2Questions = [
@@ -89,9 +96,9 @@ async function seed() {
 
   // Insert questions
   const allQuestions = [
-    ...round1Questions.map((q, i) => ({ ...q, round: 1, questionNumber: i + 1, basePoints: 10, isActive: true })),
-    ...round2Questions.map((q, i) => ({ ...q, round: 2, questionNumber: i + 1, basePoints: 15, isActive: true })),
-    ...round3Questions.map((q, i) => ({ ...q, round: 3, questionNumber: i + 1, basePoints: 10, emojiClue: q.emojiClue || '', isActive: true })),
+    ...round1Questions.map((q, i) => ({ ...q, round: 1, questionNumber: i + 1, basePoints: 1, isActive: true })),
+    ...round2Questions.map((q, i) => ({ ...q, round: 2, questionNumber: i + 1, basePoints: 1, isActive: true })),
+    ...round3Questions.map((q, i) => ({ ...q, round: 3, questionNumber: i + 1, basePoints: 1, emojiClue: q.emojiClue || '', isActive: true })),
   ];
 
   await mongoose.connection.collection('questions').insertMany(allQuestions);
@@ -102,9 +109,9 @@ async function seed() {
     sessionId: 'main',
     status: 'waiting',
     currentRound: 0,
-    roundDurations: { round1: 900, round2: 1200, round3: 900 },
+    roundDurations: { round1: 600, round2: 600, round3: 600 },
     fastestAnswers: { round1: [], round2: [], round3: [] },
-    settings: { fastestFingerBonus: 5, timeBonusEnabled: true, shuffleQuestions: true },
+    settings: { fastestFingerBonus: 0, timeBonusEnabled: false, shuffleQuestions: true },
     createdAt: new Date(),
     updatedAt: new Date(),
   });

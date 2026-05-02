@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 const GdgLogo = ({ className = "w-8 h-8" }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png" alt="GDG Logo" className={`${className} object-contain`} />
+  <img src="/gdg-logo.png" alt="GDG Logo" className={`${className} object-contain`} />
 );
 
 export default function AdminLayout({ children }) {

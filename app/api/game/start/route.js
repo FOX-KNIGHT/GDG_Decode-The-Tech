@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import GameSession from '@/lib/models/GameSession';
 import Team from '@/lib/models/Team';
+import Question from '@/lib/models/Question';
 
 export async function POST(req) {
   await dbConnect();
@@ -46,7 +47,24 @@ export async function POST(req) {
     session.status = `round${round}_ended`;
     session.isPaused = false;
     await session.save();
-    return NextResponse.json({ session, message: `Round ${round} ended` });
+
+    // Calculate qualifying threshold (50% of max points for this round)
+    const roundQuestions = await Question.find({ round, isActive: true });
+    const maxPoints = roundQuestions.reduce((sum, q) => sum + (q.basePoints || 10), 0);
+    const threshold = maxPoints * 0.5;
+
+    // Get all teams
+    const allTeams = await Team.find({});
+    for (const team of allTeams) {
+      const roundScore = team.scores[`round${round}`] || 0;
+      if (roundScore < threshold) {
+        team.isEliminated = true;
+        team.eliminatedAtRound = round;
+        await team.save();
+      }
+    }
+
+    return NextResponse.json({ session, message: `Round ${round} ended. Teams evaluated for qualification.` });
   }
 
   if (action === 'pause_round') {
@@ -92,6 +110,9 @@ export async function POST(req) {
       currentPlayerIndex: 0,
       scores: { round1: 0, round2: 0, round3: 0, total: 0, bonusPoints: 0 },
       answeredQuestions: { round1: [], round2: [], round3: [] },
+      isEliminated: false,
+      eliminatedAtRound: null,
+      questionOrder: { round1: [], round2: [], round3: [] },
     });
     
     return NextResponse.json({ message: 'Game reset' });

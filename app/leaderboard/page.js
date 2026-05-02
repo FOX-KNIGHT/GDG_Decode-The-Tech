@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const GdgLogo = ({ className = "w-6 h-6" }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Google_Developer_Groups_logo.svg/512px-Google_Developer_Groups_logo.svg.png" alt="GDG Logo" className={`${className} object-contain`} />
+  <img src="/gdg-logo.png" alt="GDG Logo" className={`${className} object-contain`} />
 );
 
 export default function LeaderboardPage() {
@@ -38,7 +38,8 @@ export default function LeaderboardPage() {
       {/* High-End Background Ambience */}
       <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-0"></div>
       <div className="cyber-grid absolute inset-0 pointer-events-none z-0"></div>
-      <div className="gdg-watermark-bg z-0 opacity-[0.03] animate-pulse-glow" style={{ transform: 'translate(-50%, -50%) rotate(15deg) scale(1.2)' }}></div>
+      <div className="premium-watermark"></div>
+      <div className="gdg-side-hud"></div>
 
       <div className="ambient-orb orb-blue z-0 opacity-40"></div>
       <div className="ambient-orb orb-yellow z-0 opacity-40"></div>
@@ -62,8 +63,22 @@ export default function LeaderboardPage() {
               SYS_PHASE 0{session?.currentRound || 0} // <span className="text-white">{session?.status?.replace(/_/g, ' ') || 'STANDBY'}</span>
             </div>
           </div>
-          <div className="font-mono text-[9px] text-gray-500 tracking-[0.4em] hidden md:block bg-dark-950 px-6 py-3 border border-white/10 uppercase clip-angled-tl">
-            {lastUpdated ? `SYNC: ${lastUpdated.toLocaleTimeString()}` : '—'}
+          <div className="time-display bg-dark-900/40 backdrop-blur-md px-6 py-3 border border-white/10 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col items-end gap-1 min-w-[150px] relative overflow-hidden transition-all hover:border-white/20 hover:bg-dark-900/60">
+            <div className="absolute inset-0 bg-white/5 opacity-0 hover:opacity-100 transition-opacity pointer-events-none"></div>
+            <span className="text-gray-500 text-[8px] font-mono tracking-[0.5em] font-bold z-10">LAST_GLOBAL_SYNC</span>
+            <span className="text-white font-mono font-bold text-sm tracking-widest flex items-center gap-2 z-10">
+              {lastUpdated ? (
+                <>
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.6)]"></span>
+                  <span>{lastUpdated.toLocaleTimeString().replace(/:/g, '꞉')}</span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
+                  <span className="text-gray-500">--꞉--꞉--</span>
+                </>
+              )}
+            </span>
           </div>
         </div>
       </div>
@@ -121,13 +136,14 @@ export default function LeaderboardPage() {
             {/* Full table headers - Geometric style */}
             {leaderboard.length > 0 && (
               <div className="grid grid-cols-12 gap-4 px-8 py-5 font-mono text-[10px] text-gray-500 tracking-[0.4em] border-b border-white/20 mb-6 clip-angled bg-dark-900/80 sticky top-[98px] z-30 shadow-[0_10px_30px_rgba(0,0,0,0.6)] uppercase">
-                <div className="col-span-2 md:col-span-1 text-center">RNK</div>
-                <div className="col-span-7 md:col-span-4 pl-4 border-l border-white/10">NODE_ID</div>
+                <div className="col-span-1 text-center">RNK</div>
+                <div className="col-span-4 md:col-span-3 pl-4 border-l border-white/10">NODE_ID</div>
                 <div className="col-span-3 hidden md:block text-center border-l border-white/10">OPERATORS</div>
+                <div className="col-span-2 hidden lg:block text-center text-gray-500 border-l border-white/10">LAST_SYNC</div>
                 <div className="col-span-1 hidden lg:block text-right text-gdg-blue font-bold border-l border-white/10">P1</div>
                 <div className="col-span-1 hidden lg:block text-right text-gdg-yellow font-bold border-l border-white/10">P2</div>
                 <div className="col-span-1 hidden lg:block text-right text-gdg-red font-bold border-l border-white/10">P3</div>
-                <div className="col-span-3 md:col-span-2 lg:col-span-2 text-right text-white font-bold border-l border-white/10">TOTAL</div>
+                <div className="col-span-3 md:col-span-2 lg:col-span-1 text-right text-white font-bold border-l border-white/10">TOTAL</div>
               </div>
             )}
 
@@ -182,7 +198,7 @@ export default function LeaderboardPage() {
 
                     <div className="relative grid grid-cols-12 gap-4 items-center">
                       {/* Rank */}
-                      <div className="col-span-2 md:col-span-1 flex-shrink-0 text-center">
+                      <div className="col-span-1 flex-shrink-0 text-center">
                         {isTop3 ? (
                           <div className={`font-display font-black text-2xl md:text-3xl ${textColor} drop-shadow-[0_0_15px_currentColor]`}>
                             {rankDisplay}
@@ -195,7 +211,7 @@ export default function LeaderboardPage() {
                       </div>
 
                       {/* Team info */}
-                      <div className="col-span-7 md:col-span-4 z-10 pl-4 border-l border-white/5">
+                      <div className="col-span-4 md:col-span-3 z-10 pl-4 border-l border-white/5">
                         <div className="flex items-center gap-3">
                           <div className={`font-display font-bold text-base md:text-lg tracking-widest uppercase ${team.isDisqualified ? 'text-gdg-red line-through' : 'text-white'} truncate`}>
                             {team.teamName}
@@ -216,6 +232,23 @@ export default function LeaderboardPage() {
                         </div>
                       </div>
 
+                      {/* Last Sync Time */}
+                      <div className="col-span-2 hidden lg:flex flex-col items-center justify-center border-l border-white/5 z-10">
+                        {team.lastAnswerTime ? (
+                          <div className="bg-white/[0.03] px-4 py-2 border border-white/10 rounded-lg flex flex-col items-center group-hover:bg-white/[0.05] transition-colors">
+                            <span className="text-gray-300 font-mono font-bold text-xs tracking-wider flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 opacity-80"></span>
+                              {new Date(team.lastAnswerTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/:/g, '꞉')}
+                            </span>
+                            <span className="text-[7px] font-mono tracking-[0.3em] text-gray-500 mt-1 uppercase">SYNCED</span>
+                          </div>
+                        ) : (
+                          <div className="px-4 py-2 flex flex-col items-center opacity-40">
+                            <span className="text-gray-600 font-mono font-bold text-xs tracking-wider">--꞉--꞉--</span>
+                          </div>
+                        )}
+                      </div>
+
                       {/* Round scores */}
                       <div className="col-span-1 hidden lg:flex items-center justify-end border-l border-white/5 font-mono text-sm text-gdg-blue/80 z-10 bg-dark-950/50 py-2 px-3">
                         {team.scores.round1 || 0}
@@ -228,7 +261,7 @@ export default function LeaderboardPage() {
                       </div>
 
                       {/* Total */}
-                      <div className="col-span-3 md:col-span-2 lg:col-span-2 text-right flex flex-col items-end justify-center z-10 pl-4 border-l border-white/5">
+                      <div className="col-span-3 md:col-span-2 lg:col-span-1 text-right flex flex-col items-end justify-center z-10 pl-4 border-l border-white/5">
                         <div className={`font-mono font-black text-2xl md:text-3xl ${
                           idx === 0 ? 'text-gdg-blue drop-shadow-[0_0_20px_rgba(66,133,244,0.5)]' :
                           idx === 1 ? 'text-gdg-yellow drop-shadow-[0_0_15px_rgba(251,188,5,0.3)]' :
