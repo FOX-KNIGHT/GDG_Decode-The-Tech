@@ -30,6 +30,9 @@ export default function AdminDashboard({ quizCode, initialSession = null, initia
   const timerRef = useRef(null);
   const [showDanger, setShowDanger] = useState(false);
 
+  // Declare isLive before any useEffect that depends on it
+  const isLive = (session?.status || 'draft') === 'active';
+
   useEffect(() => {
     fetchAll();
     
@@ -43,7 +46,7 @@ export default function AdminDashboard({ quizCode, initialSession = null, initia
     socket.on('leaderboard_update', onLeaderboardUpdate);
 
     // Dynamic polling based on game state
-    const pollInterval = isLive ? 15000 : 30000;
+    const pollInterval = session?.status === 'active' ? 15000 : 30000;
     const poll = setInterval(() => {
       if (!document.hidden) fetchAll();
     }, pollInterval);
@@ -138,7 +141,6 @@ export default function AdminDashboard({ quizCode, initialSession = null, initia
   const status = session?.status || 'draft';
   const statusInfo = STATUS_MAP[status] || STATUS_MAP.draft;
   const currentRound = session?.currentRound || 0;
-  const isLive = status === 'active';
 
   const containerVars = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const itemVars = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } };
